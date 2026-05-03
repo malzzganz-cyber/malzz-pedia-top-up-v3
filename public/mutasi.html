@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f2efe9">
+<title>Mutasi — Malzz Pedia</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+body { background: var(--cream-2); }
+.mutasi-wrap { padding: 16px 16px 72px; }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.stat-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 16px;
+  animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both;
+}
+.stat-card .n { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 400; color: var(--ink); }
+.stat-card .l { font-size: 0.68rem; color: var(--stone); margin-top: 2px; }
+.stat-card.accent-card { background: var(--ink); border-color: var(--ink); }
+.stat-card.accent-card .n { color: var(--cream); }
+.stat-card.accent-card .l { color: rgba(240,236,228,0.5); }
+
+/* FILTER BAR */
+.filter-bar {
+  display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto;
+  scrollbar-width: none; padding-bottom: 2px;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-chip {
+  flex-shrink: 0; padding: 7px 14px; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 500; border: 1.5px solid var(--border);
+  background: var(--white); color: var(--stone-2); cursor: pointer;
+  transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+}
+.filter-chip.active { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+
+/* TRX CARDS */
+.trx-list { display: flex; flex-direction: column; gap: 10px; }
+.trx-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r2); overflow: hidden;
+  animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both;
+}
+.trx-card-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 16px; border-bottom: 1px solid var(--border);
+  background: var(--cream-2);
+}
+.trx-code { font-size: 0.72rem; color: var(--stone-2); font-family: monospace; }
+.trx-date { font-size: 0.68rem; color: var(--stone); }
+.trx-body { padding: 12px 16px; }
+.trx-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+.trx-l { font-size: 0.73rem; color: var(--stone); }
+.trx-v { font-size: 0.8rem; color: var(--ink-2); font-weight: 400; }
+.trx-footer {
+  padding: 10px 16px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--cream-2);
+}
+.trx-untung { font-family: 'Playfair Display', serif; font-size: 0.95rem; }
+.trx-untung.pos { color: var(--green); }
+.trx-untung.neg { color: var(--red); }
+
+/* EMPTY */
+.empty-state { text-align: center; padding: 48px 20px; color: var(--stone-2); }
+.empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+/* ADMIN NAV */
+.admin-bnav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  height: 56px; background: var(--ink);
+  display: flex; align-items: center; justify-content: space-around;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.admin-bnav a {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 2px; text-decoration: none; color: rgba(240,236,228,0.5);
+  font-size: 0.62rem; font-weight: 500; padding: 8px 0;
+  transition: color 0.2s; -webkit-tap-highlight-color: transparent;
+}
+.admin-bnav a.active, .admin-bnav a:hover { color: var(--cream); }
+.admin-bnav-icon { font-size: 1.1rem; }
+</style>
+</head>
+<body>
+<nav class="nav" style="background:var(--ink);border-color:rgba(255,255,255,0.1);">
+  <span class="nav-logo" style="color:var(--cream);">Malzz <em>Pedia</em></span>
+  <button class="nav-cta" style="background:rgba(255,255,255,0.12);color:var(--cream);" onclick="logout()">Keluar</button>
+</nav>
+
+<div class="page-wrap">
+  <div class="mutasi-wrap">
+    <div style="margin-bottom:16px;">
+      <span class="eyebrow">Laporan</span>
+      <h1 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink);font-weight:400;">Riwayat Transaksi</h1>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card d1"><div class="n" id="st-total">—</div><div class="l">Total Transaksi</div></div>
+      <div class="stat-card d2"><div class="n" id="st-sukses">—</div><div class="l">Berhasil</div></div>
+      <div class="stat-card d3" style="grid-column:span 1;"><div class="n" id="st-revenue" style="font-size:1.1rem;">—</div><div class="l">Total Pendapatan</div></div>
+      <div class="stat-card accent-card d4"><div class="n" id="st-untung" style="font-size:1.1rem;">—</div><div class="l">Total Untung</div></div>
+    </div>
+
+    <!-- SEARCH + FILTER -->
+    <div style="margin-bottom:10px;">
+      <div style="position:relative;">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:0.9rem;color:var(--stone);">🔍</span>
+        <input type="text" class="input" id="search-inp" placeholder="Cari tujuan atau kode produk..." oninput="filterAll()" style="padding-left:40px;">
+      </div>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-chip active" onclick="setFilter('', this)">Semua</div>
+      <div class="filter-chip" onclick="setFilter('success', this)">Berhasil</div>
+      <div class="filter-chip" onclick="setFilter('pending', this)">Pending</div>
+      <div class="filter-chip" onclick="setFilter('failed', this)">Gagal</div>
+    </div>
+
+    <!-- LIST -->
+    <div class="trx-list" id="trx-list">
+      <div class="empty-state"><div class="icon">⏳</div><p>Memuat data...</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="admin-bnav">
+  <a href="/admin"><span class="admin-bnav-icon">📦</span>Produk</a>
+  <a href="/mutasi" class="active"><span class="admin-bnav-icon">💳</span>Mutasi</a>
+  <a href="/" target="_blank"><span class="admin-bnav-icon">🏠</span>Toko</a>
+</div>
+
+<script>
+let all = [], statusFilter = '';
+function fmt(n) { return n ? 'Rp ' + parseInt(n).toLocaleString('id-ID') : '—'; }
+function fmtDate(d) { return new Date(d).toLocaleString('id-ID', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+
+const sb = { success:'badge-success', pending:'badge-warn', process:'badge-warn', failed:'badge-danger', gagal_buat_order:'badge-danger', menunggu_pembayaran:'badge-stone' };
+
+function setFilter(s, el) {
+  statusFilter = s;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  filterAll();
+}
+
+function filterAll() {
+  const q = document.getElementById('search-inp').value.toLowerCase();
+  let list = all;
+  if (statusFilter) list = list.filter(t => t.statusDeposit === statusFilter || t.statusOrder === statusFilter);
+  if (q) list = list.filter(t => t.tujuan.toLowerCase().includes(q) || t.productCode.toLowerCase().includes(q));
+  render(list);
+}
+
+function render(list) {
+  const el = document.getElementById('trx-list');
+  if (!list.length) { el.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Tidak ada transaksi.</p></div>'; return; }
+  el.innerHTML = list.map((t,i) => {
+    const u = t.untung || 0;
+    return `
+    <div class="trx-card" style="animation-delay:${Math.min(i,8)*0.04}s">
+      <div class="trx-card-hdr">
+        <span class="trx-code">${t.productCode}</span>
+        <span class="trx-date">${fmtDate(t.tanggal)}</span>
+      </div>
+      <div class="trx-body">
+        <div class="trx-row"><span class="trx-l">Tujuan</span><span class="trx-v">${t.tujuan}</span></div>
+        <div class="trx-row"><span class="trx-l">Nominal</span><span class="trx-v">${fmt(t.nominalDeposit)}</span></div>
+        <div class="trx-row"><span class="trx-l">Deposit</span><span><span class="badge ${sb[t.statusDeposit]||'badge-stone'}">${t.statusDeposit}</span></span></div>
+        <div class="trx-row"><span class="trx-l">Order</span><span><span class="badge ${sb[t.statusOrder]||'badge-stone'}">${t.statusOrder}</span></span></div>
+      </div>
+      ${t.hargaProduk || t.untung ? `
+      <div class="trx-footer">
+        <span style="font-size:0.72rem;color:var(--stone);">Harga beli: ${fmt(t.hargaProduk)}</span>
+        <span class="trx-untung ${u>0?'pos':u<0?'neg':''}">${u!==0 ? (u>0?'+':'-') + fmt(Math.abs(u)) : '—'}</span>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function updateStats(list) {
+  const ok = list.filter(t => t.statusDeposit === 'success');
+  document.getElementById('st-total').textContent = list.length;
+  document.getElementById('st-sukses').textContent = ok.length;
+  document.getElementById('st-revenue').textContent = fmt(ok.reduce((a,t) => a+(t.saldoDiterima||0), 0));
+  document.getElementById('st-untung').textContent = fmt(ok.reduce((a,t) => a+(t.untung||0), 0));
+}
+
+async function load() {
+  try {
+    const res = await fetch('/api/mutasi');
+    const data = await res.json();
+    if (data.success) { all = data.data; updateStats(all); render(all); }
+  } catch { document.getElementById('trx-list').innerHTML = '<div class="empty-state"><div class="icon">❌</div><p>Gagal memuat data.</p></div>'; }
+}
+
+async function logout() { await fetch('/logout'); window.location.href = '/login'; }
+
+load();
+</script>
+</body>
+</html>
