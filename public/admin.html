@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f2efe9">
+<title>Admin — Malzz Pedia</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+body { background: var(--cream-2); }
+.admin-wrap { padding: 16px 16px 80px; display: flex; flex-direction: column; gap: 14px; }
+
+.admin-hdr {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
+}
+.admin-hdr h1 { font-size: 1.1rem; color: var(--ink); }
+
+/* FORM CARD */
+.form-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r2); overflow: hidden;
+  animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both;
+}
+.form-card-hdr {
+  padding: 16px 18px; border-bottom: 1px solid var(--border);
+  background: var(--cream-2);
+  display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.form-card-hdr h2 { font-size: 0.95rem; font-weight: 500; color: var(--ink); }
+.form-toggle { font-size: 1rem; color: var(--stone-2); transition: transform 0.25s; }
+.form-card-hdr.open .form-toggle { transform: rotate(180deg); }
+.form-body { padding: 18px; display: none; animation: fadeUp 0.3s ease both; }
+.form-body.open { display: block; }
+
+/* PRODUK LIST */
+.prod-list { display: flex; flex-direction: column; }
+.prod-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 18px; border-bottom: 1px solid var(--border);
+  background: var(--white);
+  animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both;
+}
+.prod-row:last-child { border-bottom: none; }
+.prod-avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--cream-2); display: flex; align-items: center;
+  justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+}
+.prod-row-info { flex: 1; min-width: 0; }
+.prod-row-name { font-size: 0.84rem; font-weight: 400; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prod-row-meta { font-size: 0.72rem; color: var(--stone); margin-top: 1px; }
+.del-btn {
+  flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--border); background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.8rem; color: var(--red);
+  transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+}
+.del-btn:active { background: var(--red-bg); transform: scale(0.93); }
+
+/* BOTTOM ADMIN NAV */
+.admin-bnav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  height: 56px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: space-around;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.admin-bnav a {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 2px; text-decoration: none; color: rgba(240,236,228,0.5);
+  font-size: 0.62rem; font-weight: 500; letter-spacing: 0.03em;
+  padding: 8px 0; transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.admin-bnav a.active, .admin-bnav a:hover { color: var(--cream); }
+.admin-bnav-icon { font-size: 1.1rem; }
+</style>
+</head>
+<body>
+<nav class="nav" style="background:var(--ink);border-color:rgba(255,255,255,0.1);">
+  <span class="nav-logo" style="color:var(--cream);">Malzz <em>Pedia</em></span>
+  <button class="nav-cta" style="background:rgba(255,255,255,0.12);color:var(--cream);" onclick="logout()">Keluar</button>
+</nav>
+
+<div class="page-wrap">
+  <div class="admin-wrap">
+    <!-- HEADER -->
+    <div>
+      <span class="eyebrow">Panel</span>
+      <h1 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink);font-weight:400;">Manajemen Produk</h1>
+    </div>
+
+    <!-- FORM TAMBAH -->
+    <div class="form-card anim-up">
+      <div class="form-card-hdr" id="form-toggle" onclick="toggleForm()">
+        <h2>+ Tambah Produk Baru</h2>
+        <span class="form-toggle">▾</span>
+      </div>
+      <div class="form-body" id="form-body">
+        <div class="field"><label class="label">Nama Produk *</label><input type="text" class="input" id="f-nama" placeholder="Nama produk..."></div>
+        <div class="field"><label class="label">Deskripsi Singkat</label><input type="text" class="input" id="f-deks" placeholder="Max 80 karakter..."></div>
+        <div class="field"><label class="label">URL Gambar</label><input type="url" class="input" id="f-img" placeholder="https://..." inputmode="url"></div>
+        <div class="field" style="margin-bottom:20px;"><label class="label">Link Order</label><input type="text" class="input" id="f-link" placeholder="/topup atau URL..."></div>
+        <button class="btn btn-dark btn-full" id="btn-tambah" onclick="tambah()">Simpan Produk</button>
+      </div>
+    </div>
+
+    <!-- PRODUK LIST -->
+    <div class="form-card anim-up d2">
+      <div class="form-card-hdr" style="cursor:default;">
+        <h2>Daftar Produk</h2>
+        <input type="text" id="search-prod" placeholder="Cari..." oninput="filterProd(this.value)"
+          style="padding:5px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.78rem;background:var(--cream);outline:none;width:110px;font-family:'DM Sans',sans-serif;">
+      </div>
+      <div class="prod-list" id="prod-list">
+        <div style="padding:32px;text-align:center;color:var(--stone);font-size:0.82rem;">Memuat...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="admin-bnav">
+  <a href="/admin" class="active"><span class="admin-bnav-icon">📦</span>Produk</a>
+  <a href="/mutasi"><span class="admin-bnav-icon">💳</span>Mutasi</a>
+  <a href="/" target="_blank"><span class="admin-bnav-icon">🏠</span>Toko</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let prods = [];
+function toast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+function fmtDate(d) { return new Date(d).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}); }
+
+function toggleForm() {
+  const hdr = document.getElementById('form-toggle');
+  const body = document.getElementById('form-body');
+  hdr.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+async function loadProds() {
+  try {
+    const res = await fetch('/produk');
+    const data = await res.json();
+    prods = data.data || [];
+    renderProds(prods);
+  } catch { document.getElementById('prod-list').innerHTML = '<div style="padding:24px;text-align:center;color:var(--stone);font-size:0.82rem;">Gagal memuat.</div>'; }
+}
+
+function renderProds(list) {
+  const el = document.getElementById('prod-list');
+  if (!list.length) { el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--stone);font-size:0.82rem;">Belum ada produk.</div>'; return; }
+  el.innerHTML = list.map((p,i) => `
+    <div class="prod-row" style="animation-delay:${i*0.04}s">
+      <div class="prod-avatar">${p.imageurl ? `<img src="${p.imageurl}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onerror="this.outerHTML='🎮'">` : '🎮'}</div>
+      <div class="prod-row-info">
+        <div class="prod-row-name">${p.nama}</div>
+        <div class="prod-row-meta">${fmtDate(p.tanggal)}</div>
+      </div>
+      <button class="del-btn" onclick="hapus('${p._id}')">🗑</button>
+    </div>`).join('');
+}
+
+function filterProd(q) {
+  renderProds(prods.filter(p => p.nama.toLowerCase().includes(q.toLowerCase())));
+}
+
+async function tambah() {
+  const nama = document.getElementById('f-nama').value.trim();
+  if (!nama) { toast('Nama wajib diisi.', 'error'); return; }
+  const btn = document.getElementById('btn-tambah');
+  btn.innerHTML = '<div class="spinner"></div> Menyimpan...'; btn.disabled = true;
+  try {
+    const res = await fetch('/produk', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        nama, deks: document.getElementById('f-deks').value,
+        imageurl: document.getElementById('f-img').value,
+        linkorder: document.getElementById('f-link').value,
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      toast('Produk ditambahkan!', 'success');
+      ['f-nama','f-deks','f-img','f-link'].forEach(id => document.getElementById(id).value = '');
+      loadProds();
+    } else toast(data.message||'Gagal.', 'error');
+  } catch { toast('Terjadi kesalahan.', 'error'); }
+  btn.innerHTML = 'Simpan Produk'; btn.disabled = false;
+}
+
+async function hapus(id) {
+  if (!confirm('Hapus produk ini?')) return;
+  const res = await fetch(`/produk/${id}`, {method:'DELETE'});
+  const data = await res.json();
+  if (data.success) { toast('Dihapus.'); loadProds(); }
+  else toast('Gagal hapus.', 'error');
+}
+
+async function logout() { await fetch('/logout'); window.location.href = '/login'; }
+
+loadProds();
+</script>
+</body>
+</html>
