@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f9f6f1">
+<title>Top Up — Malzz Pedia</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.page-header { padding: 24px 20px 20px; background: var(--white); border-bottom: 1px solid var(--border); animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+.page-header h1 { font-size: 1.7rem; color: var(--ink); }
+.page-header p { font-size: 0.82rem; color: var(--stone-2); margin-top: 4px; }
+
+.steps-bar { display: flex; align-items: center; padding: 14px 20px; background: var(--white); border-bottom: 1px solid var(--border); animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
+.s-dot { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.s-circle { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--cream-2); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: var(--stone); transition: all 0.3s cubic-bezier(0.22,1,0.36,1); }
+.s-circle.active { background: var(--ink); border-color: var(--ink); color: var(--cream); transform: scale(1.1); }
+.s-circle.done { background: var(--accent); border-color: var(--accent); color: white; }
+.s-lbl { font-size: 0.6rem; color: var(--stone); text-transform: uppercase; letter-spacing: 0.06em; }
+.s-lbl.active { color: var(--ink); font-weight: 500; }
+.s-line { flex: 1; height: 1px; background: var(--border); margin: 0 8px 18px; transition: background 0.4s; }
+.s-line.done { background: var(--accent); }
+
+.panels { overflow: hidden; }
+.panel { display: none; }
+.panel.active { display: block; animation: panelIn 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes panelIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+
+.pane-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+.card2 { background: var(--white); border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; }
+.card2-head { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.card2-head h3 { font-size: 1rem; color: var(--ink); }
+.card2-body { padding: 16px 20px; }
+
+.id-hint { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: var(--cream-2); border-radius: var(--r); margin-top: 12px; opacity: 0; transition: opacity 0.3s; }
+.id-hint.show { opacity: 1; }
+.id-hint-val { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+.id-hint-sub { font-size: 0.72rem; color: var(--stone); }
+
+.search-wrap { position: relative; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.search-ico { position: absolute; left: 26px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: var(--stone); pointer-events: none; }
+.lay-search { width: 100%; height: 40px; padding: 0 14px 0 36px; background: var(--cream-2); border: 1.5px solid var(--border); border-radius: var(--r); color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; outline: none; }
+.lay-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: var(--white); }
+
+.lay-scroll { max-height: 380px; overflow-y: auto; }
+.lay-scroll::-webkit-scrollbar { width: 3px; }
+.lay-scroll::-webkit-scrollbar-thumb { background: var(--cream-3); }
+
+.lay-item { display: flex; align-items: center; gap: 14px; padding: 13px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; -webkit-tap-highlight-color: transparent; }
+.lay-item:last-child { border-bottom: none; }
+.lay-item:active { background: var(--cream-2); }
+.lay-item.sel { background: rgba(139,115,85,0.06); }
+.lay-ico { width: 36px; height: 36px; border-radius: 10px; background: var(--cream-2); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.lay-name { font-size: 0.85rem; color: var(--ink-2); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lay-price { font-size: 0.75rem; color: var(--accent); font-weight: 500; white-space: nowrap; }
+.lay-chk { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.lay-item.sel .lay-chk { background: var(--ink); border-color: var(--ink); }
+.lay-item.sel .lay-chk::after { content: ''; width: 7px; height: 7px; background: white; border-radius: 50%; }
+
+.sum-rows { }
+.sum-r { display: flex; justify-content: space-between; align-items: center; padding: 13px 20px; border-bottom: 1px solid var(--border); }
+.sum-r:last-child { border-bottom: none; }
+.sum-l { font-size: 0.78rem; color: var(--stone); }
+.sum-v { font-size: 0.86rem; color: var(--ink-2); max-width: 56%; text-align: right; word-break: break-all; }
+.sum-total .sum-v { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--ink); }
+
+.float-bar { position: fixed; bottom: 64px; left: 0; right: 0; z-index: 150; padding: 10px 16px 12px; background: linear-gradient(to top, var(--cream) 70%, transparent); display: none; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">Malzz <em>Pedia</em></a>
+  <div class="nav-actions"><a href="/status" class="nav-icon-btn">🔍</a></div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <span class="eyebrow">Transaksi</span>
+    <h1>Top Up</h1>
+    <p>Isi ID, pilih layanan, bayar.</p>
+  </div>
+
+  <div class="steps-bar">
+    <div class="s-dot"><div class="s-circle active" id="sc1">1</div><div class="s-lbl active" id="sl1">Tujuan</div></div>
+    <div class="s-line" id="ln1"></div>
+    <div class="s-dot"><div class="s-circle" id="sc2">2</div><div class="s-lbl" id="sl2">Layanan</div></div>
+    <div class="s-line" id="ln2"></div>
+    <div class="s-dot"><div class="s-circle" id="sc3">3</div><div class="s-lbl" id="sl3">Konfirmasi</div></div>
+  </div>
+
+  <div class="panels">
+    <!-- P1 -->
+    <div class="panel active" id="p1">
+      <div class="pane-body">
+        <div class="card2">
+          <div class="card2-head"><h3>ID Tujuan</h3></div>
+          <div class="card2-body">
+            <div class="field" style="margin-bottom:0;">
+              <label class="label">User ID / Nomor</label>
+              <input type="text" class="input" id="inp-id" placeholder="Contoh: 12345678" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="id-hint" id="id-hint">
+              <span>👤</span>
+              <div><div class="id-hint-val" id="id-hint-val">—</div><div class="id-hint-sub">ID yang akan di-top up</div></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-dark btn-full" onclick="step2()">Pilih Layanan →</button>
+      </div>
+    </div>
+
+    <!-- P2 -->
+    <div class="panel" id="p2">
+      <div class="pane-body" style="padding:0;">
+        <div class="card2">
+          <div class="search-wrap">
+            <span class="search-ico">🔍</span>
+            <input type="search" class="lay-search" id="lay-search" placeholder="Cari layanan..." oninput="filterLay(this.value)">
+          </div>
+          <div class="lay-scroll" id="lay-list">
+            <div style="padding:32px;text-align:center;color:var(--stone);font-size:0.84rem;">
+              <div class="spinner" style="margin:0 auto 10px;border-color:var(--cream-3);border-top-color:var(--accent);"></div>
+              Memuat...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P3 -->
+    <div class="panel" id="p3">
+      <div class="pane-body">
+        <div class="card2">
+          <div class="card2-head"><h3>Ringkasan Order</h3></div>
+          <div class="sum-rows">
+            <div class="sum-r"><span class="sum-l">Tujuan</span><span class="sum-v" id="sv-tujuan">—</span></div>
+            <div class="sum-r"><span class="sum-l">Layanan</span><span class="sum-v" id="sv-lay">—</span></div>
+            <div class="sum-r sum-total"><span class="sum-l">Total</span><span class="sum-v" id="sv-total">—</span></div>
+          </div>
+          <div style="padding:16px 20px;border-top:1px solid var(--border);background:var(--cream);">
+            <button class="btn btn-dark btn-full" id="btn-order" onclick="buatOrder()">Lanjut Pembayaran</button>
+            <p style="font-size:0.7rem;color:var(--stone);text-align:center;margin-top:10px;line-height:1.5;">Pastikan ID sudah benar sebelum lanjut.</p>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-full" onclick="goStep(2)" style="margin-top:0;">← Ganti Layanan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Float button for step 2 -->
+<div class="float-bar" id="float-bar">
+  <button class="btn btn-dark btn-full" id="float-btn" onclick="step3()">Pilih Layanan</button>
+</div>
+
+<nav class="bottom-nav">
+  <a href="/" class="bnav-item"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></a>
+  <a href="/products" class="bnav-item"><span class="bnav-icon">🎮</span><span class="bnav-label">Produk</span></a>
+  <a href="/topup" class="bnav-item active"><span class="bnav-icon">⚡</span><span class="bnav-label">Top Up</span></a>
+  <a href="/status" class="bnav-item"><span class="bnav-icon">🔍</span><span class="bnav-label">Status</span></a>
+  <a href="/panduan" class="bnav-item"><span class="bnav-icon">📖</span><span class="bnav-label">Panduan</span></a>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+let layData=[], sel=null, curStep=1;
+const toast=(m,t='')=>{const el=document.getElementById('toast');el.textContent=m;el.className='toast show '+t;setTimeout(()=>el.className='toast',3000);};
+const rp=n=>'Rp '+parseInt(n).toLocaleString('id-ID');
+
+document.getElementById('inp-id').addEventListener('input',function(){
+  const v=this.value.trim();
+  document.getElementById('id-hint-val').textContent=v||'—';
+  document.getElementById('id-hint').classList.toggle('show',v.length>0);
+});
+
+function goStep(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p'+n).classList.add('active');
+  curStep=n;
+  for(let i=1;i<=3;i++){
+    const c=document.getElementById('sc'+i), l=document.getElementById('sl'+i);
+    c.className='s-circle'+(i<n?' done':i===n?' active':'');
+    c.textContent=i<n?'✓':i;
+    l.className='s-lbl'+(i===n?' active':'');
+    if(i<3)document.getElementById('ln'+i).className='s-line'+(i<n?' done':'');
+  }
+  document.getElementById('float-bar').style.display=n===2?'block':'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function step2(){
+  const id=document.getElementById('inp-id').value.trim();
+  if(!id){toast('Masukkan ID tujuan dulu.','error');document.getElementById('inp-id').focus();return;}
+  goStep(2);
+  if(!layData.length)loadLay();
+}
+
+function step3(){
+  if(!sel){toast('Pilih layanan dulu.','error');return;}
+  document.getElementById('sv-tujuan').textContent=document.getElementById('inp-id').value.trim();
+  document.getElementById('sv-lay').textContent=sel.name||sel.code;
+  document.getElementById('sv-total').textContent=rp(sel.price);
+  goStep(3);
+}
+
+async function loadLay(){
+  try{
+    const r=await fetch('/api/layanan'), d=await r.json();
+    if(d.success){layData=d.data;renderLay(layData);}
+    else document.getElementById('lay-list').innerHTML='<p style="padding:24px;text-align:center;color:var(--stone);font-size:0.84rem;">Gagal memuat.</p>';
+  }catch{document.getElementById('lay-list').innerHTML='<p style="padding:24px;text-align:center;color:var(--stone);font-size:0.84rem;">Gagal memuat.</p>';}
+}
+
+function renderLay(list){
+  const el=document.getElementById('lay-list');
+  if(!list.length){el.innerHTML='<p style="padding:24px;text-align:center;color:var(--stone);font-size:0.84rem;">Tidak ditemukan.</p>';return;}
+  el.innerHTML=list.map((l,i)=>`
+    <div class="lay-item ${sel?.code===l.code?'sel':''}" style="animation:fadeUp 0.35s ${Math.min(i,6)*0.03}s both cubic-bezier(0.22,1,0.36,1)" onclick="pickLay('${l.code}')">
+      <div class="lay-ico">🎮</div>
+      <div class="lay-name">${l.name||l.code}</div>
+      <div class="lay-price">${rp(l.price)}</div>
+      <div class="lay-chk"></div>
+    </div>`).join('');
+}
+
+function filterLay(q){renderLay(layData.filter(l=>(l.name||l.code).toLowerCase().includes(q.toLowerCase())));}
+
+function pickLay(code){
+  sel=layData.find(l=>l.code===code);
+  renderLay(layData);
+  const fb=document.getElementById('float-btn');
+  fb.textContent=`Lanjut — ${rp(sel.price)} →`;
+  fb.style.transform='scale(0.96)';
+  setTimeout(()=>fb.style.transform='',150);
+}
+
+async function buatOrder(){
+  const id=document.getElementById('inp-id').value.trim();
+  if(!id||!sel)return;
+  const btn=document.getElementById('btn-order');
+  btn.innerHTML='<div class="spinner"></div> Memproses...';btn.disabled=true;
+  try{
+    const r=await fetch('/api/buat-transaksi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:sel.code,tujuan:id,price:sel.price})});
+    const d=await r.json();
+    if(d.success){
+      sessionStorage.setItem('mp_trx',d.internalTrxId);
+      sessionStorage.setItem('mp_payment',JSON.stringify(d.paymentDetails));
+      sessionStorage.setItem('mp_layanan',sel.name||sel.code);
+      sessionStorage.setItem('mp_tujuan',id);
+      sessionStorage.setItem('mp_price',sel.price);
+      window.location.href='/payment';
+    }else{toast(d.message||'Gagal.','error');btn.innerHTML='Lanjut Pembayaran';btn.disabled=false;}
+  }catch{toast('Terjadi kesalahan.','error');btn.innerHTML='Lanjut Pembayaran';btn.disabled=false;}
+}
+</script>
+</body>
+</html>
