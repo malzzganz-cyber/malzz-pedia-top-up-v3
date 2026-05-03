@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f0ece4">
+<title>Login Admin — Malzz Pedia</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--cream-2);}
+.login-wrap{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+.login-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--sh3);width:100%;max-width:340px;overflow:hidden;animation:scaleIn 0.45s cubic-bezier(0.22,1,0.36,1) both;}
+.lhdr{padding:30px 26px 22px;text-align:center;background:var(--cream-2);border-bottom:1px solid var(--border);}
+.llogo{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:400;color:var(--ink);}
+.llogo em{font-style:italic;color:var(--accent);}
+.lsub{font-size:0.7rem;color:var(--stone);margin-top:5px;letter-spacing:0.07em;text-transform:uppercase;}
+.lbody{padding:26px;}
+.err{background:var(--red-bg);border:1px solid rgba(140,58,58,0.2);border-radius:var(--r);padding:11px 14px;font-size:0.78rem;color:var(--red);margin-bottom:16px;display:none;animation:fadeUp 0.3s ease both;}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="lhdr"><div class="llogo">Malzz <em>Pedia</em></div><div class="lsub">Admin Panel</div></div>
+    <div class="lbody">
+      <div class="err" id="err">Username atau password salah.</div>
+      <div class="field"><label class="label">Username</label><input type="text" class="input" id="u" placeholder="Username..." autocomplete="username"></div>
+      <div class="field" style="margin-bottom:22px;"><label class="label">Password</label><input type="password" class="input" id="p" placeholder="Password..." autocomplete="current-password"></div>
+      <button class="btn btn-dark btn-full" id="btn" onclick="login()">Masuk →</button>
+    </div>
+  </div>
+</div>
+<script>
+async function login(){const btn=document.getElementById('btn'),err=document.getElementById('err');err.style.display='none';btn.innerHTML='<div class="spinner"></div> Masuk...';btn.disabled=true;try{const res=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('u').value,password:document.getElementById('p').value})}),data=await res.json();if(data.success){window.location.href='/admin';}else{err.style.display='block';btn.innerHTML='Masuk →';btn.disabled=false;}}catch{err.style.display='block';btn.innerHTML='Masuk →';btn.disabled=false;}}
+document.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+</script>
+</body>
+</html>
