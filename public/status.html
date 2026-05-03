@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f9f6f1">
+<title>Cek Status — Malzz Pedia</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.st-wrap{padding:16px;display:flex;flex-direction:column;gap:14px;}
+.st-search{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:20px;animation:fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both;}
+.st-search p{font-size:0.78rem;color:var(--stone-2);margin-bottom:14px;}
+.st-row{display:flex;gap:9px;}
+.result-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;animation:slideUp 0.4s cubic-bezier(0.22,1,0.36,1) both;}
+.result-hdr{padding:22px 20px;text-align:center;background:var(--cream-2);border-bottom:1px solid var(--border);}
+.result-icon{font-size:2.8rem;margin-bottom:8px;animation:scaleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;}
+.result-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--ink);}
+.result-sub{font-size:0.78rem;color:var(--stone-2);margin-top:3px;}
+.drow{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);}
+.drow:last-child{border-bottom:none;}
+.dl{font-size:0.74rem;color:var(--stone);}
+.dv{font-size:0.82rem;color:var(--ink);max-width:55%;text-align:right;word-break:break-all;}
+.result-acts{padding:14px 20px;background:var(--cream-2);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:9px;}
+.loading-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:40px 20px;text-align:center;display:none;}
+.loading-spin{width:30px;height:30px;border:2.5px solid var(--cream-3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 12px;}
+.empty-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:40px 20px;text-align:center;display:none;}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">Malzz <em>Pedia</em></a>
+  <a href="/topup" class="nav-cta">Top Up</a>
+</nav>
+<div class="page-wrap">
+  <div class="st-wrap">
+    <div style="padding:4px 0 2px;"><span class="eyebrow">Tracking</span><h1 style="font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--ink);font-weight:400;">Cek Status</h1></div>
+    <div class="st-search">
+      <p>Masukkan Order ID dari transaksimu.</p>
+      <div class="st-row">
+        <input type="text" class="input" id="inp-id" placeholder="Order ID..." autocomplete="off">
+        <button class="btn btn-dark" onclick="cek()" style="flex-shrink:0;height:48px;padding:0 18px;border-radius:var(--r);">Cek</button>
+      </div>
+    </div>
+    <div class="loading-card" id="loading-card"><div class="loading-spin"></div><p style="font-size:0.8rem;color:var(--stone-2);">Mengecek status...</p></div>
+    <div class="result-card" id="result-card" style="display:none;">
+      <div class="result-hdr"><div class="result-icon" id="r-icon">📦</div><div class="result-title" id="r-title">—</div><div class="result-sub" id="r-sub">—</div></div>
+      <div class="drow"><span class="dl">Order ID</span><span class="dv" id="d-id" style="font-family:monospace;font-size:0.72rem;"></span></div>
+      <div class="drow"><span class="dl">Status</span><span id="d-status"></span></div>
+      <div class="drow"><span class="dl">Produk</span><span class="dv" id="d-product">—</span></div>
+      <div class="drow"><span class="dl">Tujuan</span><span class="dv" id="d-target">—</span></div>
+      <div class="drow"><span class="dl">Harga</span><span class="dv" id="d-price">—</span></div>
+      <div class="result-acts">
+        <a href="/topup" class="btn btn-dark">Top Up Lagi →</a>
+        <a href="/" class="btn btn-ghost">Kembali ke Home</a>
+      </div>
+    </div>
+    <div class="empty-card" id="empty-card"><div style="font-size:2.5rem;margin-bottom:12px;">🔍</div><p style="font-size:0.82rem;color:var(--stone-2);line-height:1.65;">Order tidak ditemukan.<br>Pastikan ID yang kamu masukkan benar.</p></div>
+  </div>
+</div>
+<nav class="bottom-nav">
+  <a href="/" class="bnav-item"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></a>
+  <a href="/products" class="bnav-item"><span class="bnav-icon">🎮</span><span class="bnav-label">Produk</span></a>
+  <a href="/topup" class="bnav-item"><span class="bnav-icon">⚡</span><span class="bnav-label">Top Up</span></a>
+  <a href="/status" class="bnav-item active"><span class="bnav-icon">🔍</span><span class="bnav-label">Status</span></a>
+  <a href="/panduan" class="bnav-item"><span class="bnav-icon">📖</span><span class="bnav-label">Panduan</span></a>
+</nav>
+<script>
+function fmt(n){return'Rp '+parseInt(n).toLocaleString('id-ID');}
+const sm={success:{icon:'✅',title:'Berhasil!',sub:'Top up berhasil diproses.',badge:'badge-success',lbl:'Berhasil'},pending:{icon:'⏳',title:'Menunggu',sub:'Pesanan dalam antrian.',badge:'badge-warn',lbl:'Pending'},process:{icon:'⚙️',title:'Diproses',sub:'Sedang diproses.',badge:'badge-warn',lbl:'Diproses'},failed:{icon:'❌',title:'Gagal',sub:'Hubungi admin jika sudah membayar.',badge:'badge-danger',lbl:'Gagal'}};
+function showEl(id){['loading-card','result-card','empty-card'].forEach(i=>{const el=document.getElementById(i);el.style.display='none';});const t=document.getElementById(id);t.style.display='flex';t.style.flexDirection='column';}
+async function cek(){const id=document.getElementById('inp-id').value.trim();if(!id)return;showEl('loading-card');try{const res=await fetch(`/api/cek-status-order?orderId=${id}`),data=await res.json(),d=data.data;if(d){const s=sm[d.status]||{icon:'📦',title:d.status,sub:'',badge:'badge-stone',lbl:d.status};document.getElementById('r-icon').textContent=s.icon;document.getElementById('r-title').textContent=s.title;document.getElementById('r-sub').textContent=s.sub;document.getElementById('d-id').textContent=d.id||id;document.getElementById('d-status').innerHTML=`<span class="badge ${s.badge}">${s.lbl}</span>`;document.getElementById('d-product').textContent=d.product_name||d.code||'—';document.getElementById('d-target').textContent=d.target||d.tujuan||'—';document.getElementById('d-price').textContent=d.price?fmt(d.price):'—';showEl('result-card');}else showEl('empty-card');}catch{showEl('empty-card');}}
+const params=new URLSearchParams(location.search),pid=params.get('id')||sessionStorage.getItem('mp_orderid');
+if(pid){document.getElementById('inp-id').value=pid;cek();}
+document.getElementById('inp-id').addEventListener('keydown',e=>{if(e.key==='Enter')cek();});
+</script>
+</body>
+</html>
