@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f9f6f1">
+<title>Panduan — Malzz Pedia</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.guide-hdr{padding:22px 20px 18px;background:var(--white);border-bottom:1px solid var(--border);}
+.guide-hdr h1{font-size:1.7rem;color:var(--ink);}
+.guide-hdr p{font-size:0.8rem;color:var(--stone-2);margin-top:4px;}
+.gsec{padding:0 20px;}
+.gsec h2{font-size:1.1rem;color:var(--ink);padding-top:22px;margin-bottom:12px;}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;display:flex;gap:13px;align-items:flex-start;margin-bottom:9px;}
+.sn{flex-shrink:0;width:27px;height:27px;border-radius:50%;background:var(--cream-2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:600;color:var(--accent);margin-top:1px;}
+.sc h3{font-size:0.86rem;font-weight:500;color:var(--ink);margin-bottom:3px;}
+.sc p{font-size:0.76rem;color:var(--stone-2);line-height:1.6;}
+.ibox{background:rgba(139,115,85,0.07);border:1px solid rgba(139,115,85,0.2);border-radius:var(--r);padding:13px 15px;margin-bottom:14px;display:flex;gap:9px;align-items:flex-start;}
+.ibox p{font-size:0.78rem;color:var(--accent);line-height:1.6;}
+.faq-wrap{margin:0 20px 22px;border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+.fi{background:var(--white);border-bottom:1px solid var(--border);}
+.fi:last-child{border-bottom:none;}
+.fq{display:flex;justify-content:space-between;align-items:center;padding:15px 17px;cursor:pointer;gap:10px;-webkit-tap-highlight-color:transparent;}
+.fq span:first-child{font-size:0.86rem;color:var(--ink);flex:1;line-height:1.4;}
+.ftog{flex-shrink:0;width:23px;height:23px;border-radius:50%;background:var(--cream-2);display:flex;align-items:center;justify-content:center;font-size:0.88rem;color:var(--stone-2);transition:transform 0.25s,background 0.2s;}
+.fi.open .ftog{transform:rotate(45deg);background:var(--accent);color:white;}
+.fans{max-height:0;overflow:hidden;transition:max-height 0.35s cubic-bezier(0.4,0,0.2,1),padding 0.2s;padding:0 17px;}
+.fans.open{max-height:160px;padding:0 17px 14px;}
+.fans p{font-size:0.8rem;color:var(--stone-2);line-height:1.7;}
+.cta-bottom{margin:4px 20px 0;background:var(--ink);border-radius:var(--r2);padding:24px;text-align:center;}
+.cta-bottom h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cream);margin-bottom:6px;}
+.cta-bottom p{font-size:0.78rem;color:rgba(240,236,228,0.55);margin-bottom:18px;}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">Malzz <em>Pedia</em></a>
+  <a href="/topup" class="nav-cta">Top Up</a>
+</nav>
+<div class="page-wrap">
+  <div class="guide-hdr anim-up"><span class="eyebrow">Dokumentasi</span><h1>Panduan</h1><p>Cara order, pembayaran, dan FAQ lengkap.</p></div>
+  <div class="gsec">
+    <h2>Cara Melakukan Order</h2>
+    <div class="sc d1"><div class="sn">1</div><div><h3>Buka Halaman Top Up</h3><p>Masukkan User ID atau nomor tujuan yang ingin diisi. Pastikan sudah benar.</p></div></div>
+    <div class="sc d2"><div class="sn">2</div><div><h3>Pilih Layanan</h3><p>Pilih nominal atau layanan yang kamu butuhkan dari daftar.</p></div></div>
+    <div class="sc d3"><div class="sn">3</div><div><h3>Konfirmasi & Bayar</h3><p>Cek detail order, lalu bayar TEPAT sesuai nominal yang tertera.</p></div></div>
+    <div class="sc d4"><div class="sn">4</div><div><h3>Item Masuk Otomatis</h3><p>Setelah terverifikasi, item langsung dikirim ke akunmu.</p></div></div>
+    <h2>Pembayaran</h2>
+    <div class="ibox"><span style="font-size:1rem;flex-shrink:0;margin-top:1px;">⚠️</span><p>Bayar TEPAT sesuai nominal yang tertera. Lebih atau kurang bisa menyebabkan transaksi tidak diproses.</p></div>
+    <div class="sc"><div class="sn" style="background:var(--green-bg);border-color:rgba(74,124,94,0.3);color:var(--green);">✓</div><div><h3>QRIS Universal</h3><p>GoPay, OVO, Dana, ShopeePay, dan semua m-banking yang mendukung QRIS.</p></div></div>
+    <div class="sc"><div class="sn" style="background:var(--green-bg);border-color:rgba(74,124,94,0.3);color:var(--green);">✓</div><div><h3>Batas Waktu 15 Menit</h3><p>Jika waktu habis, buat transaksi baru.</p></div></div>
+    <h2>Pertanyaan Umum</h2>
+  </div>
+  <div class="faq-wrap">
+    <div class="fi"><div class="fq" onclick="tfaq(this)"><span>Berapa lama proses top up selesai?</span><div class="ftog">+</div></div><div class="fans"><p>1–5 menit setelah pembayaran terverifikasi. Pada jam sibuk bisa hingga 15 menit.</p></div></div>
+    <div class="fi"><div class="fq" onclick="tfaq(this)"><span>Apa yang terjadi jika salah input ID?</span><div class="ftog">+</div></div><div class="fans"><p>Item akan terkirim ke ID yang kamu masukkan. Pastikan benar sebelum melanjutkan.</p></div></div>
+    <div class="fi"><div class="fq" onclick="tfaq(this)"><span>Sudah bayar tapi top up belum masuk?</span><div class="ftog">+</div></div><div class="fans"><p>Tunggu 15 menit. Cek status di menu Status. Jika masih belum, hubungi admin dengan bukti bayar dan Order ID.</p></div></div>
+    <div class="fi"><div class="fq" onclick="tfaq(this)"><span>Ada biaya tambahan?</span><div class="ftog">+</div></div><div class="fans"><p>Tidak ada. Harga yang tertera sudah final termasuk semua biaya.</p></div></div>
+    <div class="fi"><div class="fq" onclick="tfaq(this)"><span>Apakah perlu membuat akun?</span><div class="ftog">+</div></div><div class="fans"><p>Tidak perlu. Langsung pilih layanan, input ID, bayar, selesai.</p></div></div>
+  </div>
+  <div class="cta-bottom"><h3>Masih ada<br><em style="font-style:italic;">pertanyaan?</em></h3><p>Hubungi kami atau langsung coba top up sekarang.</p><a href="/topup" class="btn" style="background:var(--cream);color:var(--ink);width:100%;justify-content:center;height:44px;">Mulai Top Up →</a></div>
+  <footer class="site-footer" style="margin-top:20px;"><div class="footer-logo">Malzz <em>Pedia</em></div><div class="footer-links"><a href="/topup">Top Up</a><a href="/status">Status</a></div><div class="footer-copy">© 2025 Malzz Pedia</div></footer>
+</div>
+<nav class="bottom-nav">
+  <a href="/" class="bnav-item"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></a>
+  <a href="/products" class="bnav-item"><span class="bnav-icon">🎮</span><span class="bnav-label">Produk</span></a>
+  <a href="/topup" class="bnav-item"><span class="bnav-icon">⚡</span><span class="bnav-label">Top Up</span></a>
+  <a href="/status" class="bnav-item"><span class="bnav-icon">🔍</span><span class="bnav-label">Status</span></a>
+  <a href="/panduan" class="bnav-item active"><span class="bnav-icon">📖</span><span class="bnav-label">Panduan</span></a>
+</nav>
+<script>
+function tfaq(el){const item=el.parentElement,isOpen=item.classList.contains('open');document.querySelectorAll('.fi.open').forEach(i=>{i.classList.remove('open');i.querySelector('.fans').classList.remove('open');});if(!isOpen){item.classList.add('open');item.querySelector('.fans').classList.add('open');}}
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';obs.unobserve(e.target);}}),{threshold:0.1});
+document.querySelectorAll('.sc').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(14px)';el.style.transition='opacity 0.5s cubic-bezier(0.22,1,0.36,1),transform 0.5s cubic-bezier(0.22,1,0.36,1)';obs.observe(el);});
+</script>
+</body>
+</html>
