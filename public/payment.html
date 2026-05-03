@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f9f6f1">
+<title>Pembayaran — Malzz Pedia</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.pay-wrap{padding:16px;display:flex;flex-direction:column;gap:14px;}
+.pay-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;animation:scaleIn 0.45s cubic-bezier(0.22,1,0.36,1) both;}
+.pay-chdr{padding:18px 20px;border-bottom:1px solid var(--border);background:var(--cream-2);}
+.pay-chdr h2{font-size:1.05rem;color:var(--ink);}
+.pay-chdr p{font-size:0.76rem;color:var(--stone-2);margin-top:2px;}
+.irow{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);}
+.irow:last-child{border-bottom:none;}
+.il{font-size:0.74rem;color:var(--stone);}
+.iv{font-size:0.82rem;color:var(--ink);max-width:55%;text-align:right;word-break:break-all;}
+.nom-box{margin:14px 20px;background:var(--cream-2);border:1.5px dashed var(--border);border-radius:var(--r2);padding:20px;text-align:center;}
+.nom-lbl{font-size:0.66rem;color:var(--stone);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
+.nom-amt{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:400;color:var(--ink);}
+.nom-note{font-size:0.7rem;color:var(--accent);margin-top:6px;font-weight:500;}
+.timer-sec{text-align:center;padding:0 20px 14px;}
+.timer-lbl{font-size:0.7rem;color:var(--stone);margin-bottom:4px;}
+.timer-num{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:400;color:var(--ink);transition:color 0.4s;}
+.timer-num.urgent{color:var(--red);animation:pulse 1s infinite;}
+.tbar-wrap{height:3px;background:var(--cream-3);margin:0 20px 2px;border-radius:2px;overflow:hidden;}
+.tbar{height:100%;background:var(--accent);border-radius:2px;transition:width 1s linear,background 1s;}
+.tbar.urgent{background:var(--red);}
+.qris-sec{padding:18px 20px;text-align:center;}
+.qris-frame{width:160px;height:160px;margin:0 auto 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--cream-2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;animation:scaleIn 0.5s cubic-bezier(0.22,1,0.36,1) 0.2s both;}
+.app-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px;}
+.at{padding:3px 9px;border-radius:100px;background:var(--cream-2);border:1px solid var(--border);font-size:0.65rem;color:var(--stone-2);}
+.poll{display:flex;align-items:center;gap:8px;justify-content:center;padding:13px;background:var(--cream-2);border-top:1px solid var(--border);}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite;flex-shrink:0;}
+.copy-row{display:flex;align-items:center;gap:7px;}
+.copy-btn{border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:0.68rem;color:var(--stone-2);background:var(--cream-2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.state-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(249,246,241,0.97);flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;animation:fadeIn 0.3s ease both;}
+.state-overlay.show{display:flex;}
+.state-icon-big{font-size:4rem;margin-bottom:16px;animation:scaleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;}
+.state-title{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--ink);margin-bottom:8px;animation:fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s both;}
+.state-sub{font-size:0.85rem;color:var(--stone-2);margin-bottom:28px;line-height:1.65;animation:fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.2s both;max-width:280px;}
+.state-acts{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;animation:fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.25s both;}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/topup" class="nav-icon-btn" style="border:none;background:none;font-size:1.1rem;color:var(--stone-2);">←</a>
+  <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--ink);">Pembayaran</span>
+  <div style="width:38px;"></div>
+</nav>
+<div class="page-wrap">
+  <div class="pay-wrap">
+    <div class="pay-card anim-up">
+      <div class="pay-chdr"><span class="eyebrow">Transaksi</span><h2>Selesaikan Pembayaran</h2><p>Bayar sebelum waktu habis.</p></div>
+      <div class="irow"><span class="il">Layanan</span><span class="iv" id="info-lay">—</span></div>
+      <div class="irow"><span class="il">Tujuan</span><span class="iv" id="info-tuj">—</span></div>
+      <div class="irow"><span class="il">ID Transaksi</span><div class="copy-row"><span class="iv" id="info-trx" style="font-size:0.7rem;font-family:monospace;"></span><button class="copy-btn" onclick="copyTrx()">Salin</button></div></div>
+    </div>
+    <div class="pay-card anim-up d2">
+      <div class="nom-box"><div class="nom-lbl">Nominal Pembayaran</div><div class="nom-amt" id="pay-nom">—</div><div class="nom-note">⚠ Bayar TEPAT sesuai nominal ini</div></div>
+      <div class="timer-sec"><div class="timer-lbl">Sisa waktu</div><div class="timer-num" id="timer">15:00</div></div>
+      <div class="tbar-wrap"><div class="tbar" id="tbar" style="width:100%;"></div></div>
+    </div>
+    <div class="pay-card anim-up d3">
+      <div class="qris-sec">
+        <div style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin-bottom:14px;">Scan QRIS untuk Membayar</div>
+        <div class="qris-frame">
+          <img id="qris-img" src="" alt="QRIS" style="display:none;width:100%;height:100%;object-fit:contain;" onerror="this.style.display='none';document.getElementById('qris-ph').style.display='flex'">
+          <div id="qris-ph" style="display:flex;flex-direction:column;align-items:center;gap:6px;"><span style="font-size:2.5rem;">📱</span><span style="font-size:0.7rem;color:var(--stone);">QRIS</span></div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--stone);margin-bottom:8px;">Bisa dibayar lewat</div>
+        <div class="app-tags"><span class="at">GoPay</span><span class="at">OVO</span><span class="at">Dana</span><span class="at">ShopeePay</span><span class="at">M-Banking</span></div>
+      </div>
+      <div class="poll"><div class="pdot"></div><span id="poll-txt" style="font-size:0.78rem;color:var(--stone-2);">Menunggu pembayaran...</span></div>
+    </div>
+  </div>
+</div>
+<div class="state-overlay" id="success-overlay">
+  <div class="state-icon-big">✅</div>
+  <div class="state-title">Pembayaran<br>Diterima!</div>
+  <p class="state-sub">Pesananmu sedang diproses. Item akan masuk dalam beberapa menit.</p>
+  <div class="state-acts">
+    <a id="btn-cek" href="/status" class="btn btn-dark">Cek Status Order →</a>
+    <a href="/topup" class="btn btn-ghost">Top Up Lagi</a>
+  </div>
+</div>
+<div class="state-overlay" id="failed-overlay">
+  <div class="state-icon-big">⏰</div>
+  <div class="state-title">Waktu Habis</div>
+  <p class="state-sub">Waktu pembayaran berakhir. Buat transaksi baru untuk melanjutkan.</p>
+  <div class="state-acts">
+    <a href="/topup" class="btn btn-dark">Coba Lagi →</a>
+    <a href="/" class="btn btn-ghost">Kembali ke Home</a>
+  </div>
+</div>
+<script>
+const trxId=sessionStorage.getItem('mp_trx'),payment=JSON.parse(sessionStorage.getItem('mp_payment')||'{}'),layanan=sessionStorage.getItem('mp_layanan')||'—',tujuan=sessionStorage.getItem('mp_tujuan')||'—',price=sessionStorage.getItem('mp_price')||'0';
+if(!trxId){window.location.href='/topup';}
+function fmt(n){return'Rp '+parseInt(n).toLocaleString('id-ID');}
+document.getElementById('info-lay').textContent=layanan;
+document.getElementById('info-tuj').textContent=tujuan;
+document.getElementById('info-trx').textContent=trxId?trxId.substring(0,8)+'...':'—';
+document.getElementById('pay-nom').textContent=payment.nominal?fmt(payment.nominal):fmt(price);
+const qUrl=payment.qrcode||payment.qr_url||payment.image||payment.url;
+if(qUrl){const img=document.getElementById('qris-img');img.src=qUrl;img.style.display='block';document.getElementById('qris-ph').style.display='none';}
+function copyTrx(){navigator.clipboard.writeText(trxId).catch(()=>{});const b=document.querySelector('.copy-btn');b.textContent='✓ Disalin';b.style.color='var(--green)';setTimeout(()=>{b.textContent='Salin';b.style.color='';},2000);}
+const TOTAL=15*60;let timeLeft=TOTAL;
+const timerEl=document.getElementById('timer'),barEl=document.getElementById('tbar');
+const timerIv=setInterval(()=>{timeLeft--;const m=String(Math.floor(timeLeft/60)).padStart(2,'0'),s=String(timeLeft%60).padStart(2,'0');timerEl.textContent=`${m}:${s}`;barEl.style.width=((timeLeft/TOTAL)*100)+'%';if(timeLeft<=60){timerEl.classList.add('urgent');barEl.classList.add('urgent');}if(timeLeft<=0){clearInterval(timerIv);clearInterval(pollIv);document.getElementById('failed-overlay').classList.add('show');}},1000);
+const pollIv=setInterval(async()=>{try{const res=await fetch(`/api/cek-status-deposit?trxId=${trxId}`),data=await res.json();if(data.depositStatus==='success'){clearInterval(pollIv);clearInterval(timerIv);document.getElementById('poll-txt').textContent='Pembayaran diterima!';if(data.orderId){sessionStorage.setItem('mp_orderid',data.orderId);document.getElementById('btn-cek').href=`/status?id=${data.orderId}`;}setTimeout(()=>document.getElementById('success-overlay').classList.add('show'),600);}}catch{}},5000);
+</script>
+</body>
+</html>
